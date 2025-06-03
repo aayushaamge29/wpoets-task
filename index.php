@@ -1,3 +1,4 @@
+<?php include 'header.php'; ?>
 <?php include 'db.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,18 +52,16 @@
 
 <script>
 $(document).ready(function(){
-  let firstItem = $(".point-item").first();
-  if(firstItem.length){
-    firstItem.addClass('active');
-    loadPointDetails(firstItem.data('id'));
-  }
+  let items = $(".point-item");
+  let currentIndex = 0;
+  let autoSwitchInterval = 3000;
 
-  $("#points-column").on("click", ".point-item", function(){
+  function activateItem(index) {
+    let item = items.eq(index);
     $(".point-item").removeClass('active');
-    $(this).addClass('active');
-    let id = $(this).data('id');
-    loadPointDetails(id);
-  });
+    item.addClass('active');
+    loadPointDetails(item.data('id'));
+  }
 
   function loadPointDetails(id){
     $.ajax({
@@ -86,8 +85,24 @@ $(document).ready(function(){
       }
     });
   }
+
+  function autoSlide() {
+    currentIndex = (currentIndex + 1) % items.length;
+    activateItem(currentIndex);
+  }
+
+  $("#points-column").on("click", ".point-item", function(){
+    currentIndex = $(this).index();
+    activateItem(currentIndex);
+  });
+
+  if(items.length){
+    activateItem(currentIndex);
+    setInterval(autoSlide, autoSwitchInterval);
+  }
 });
 </script>
+<?php include 'footer.php'; ?>
 
 </body>
 </html>
